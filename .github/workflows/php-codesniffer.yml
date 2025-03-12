@@ -46,7 +46,7 @@ jobs:
           chmod 600 ~/.msmtprc
 
       - name: Send Email Notification
-        if: failure()  # エラーが発生した場合のみ通知を送信
+        #if: failure()  # エラーが発生した場合のみ通知を送信
         run: |
           echo "Subject: PHP CodeSniffer Report" > email.txt
           echo "From: ${{ secrets.SMTP_USERNAME }}" >> email.txt
