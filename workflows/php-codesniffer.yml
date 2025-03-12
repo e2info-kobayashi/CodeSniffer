@@ -26,7 +26,7 @@ jobs:
       - name: Run PHP CodeSniffer
         id: phpcs
         run: |
-          phpcs --standard=PSR12 src/ > phpcs-result.log || true
+          phpcs --standard=phpcs.xml src/ > .php-codesniffer/phpcs-result.log || true
         continue-on-error: true
 
       - name: Send Email Notification
@@ -39,6 +39,6 @@ jobs:
           echo "Content-Type: text/plain; charset=UTF-8" >> PHP_CodeSniffer_Report.txt
           echo "" >> email.txt
           echo "PHP CodeSniffer errors detected in the following files:" >> email.txt
-          cat phpcs-result.log >> email.txt
-          
-          sendmail -S smtp.gmail.com:587 -f YOUR_EMAIL@gmail.com -t test+githubactions@e2info.comexample.com -u "PHP CodeSniffer Report" -smtp-auth-user REPORT_MAILADDRESS -smtp-auth-password YOUR_PASSWORD -smtp-use-starttls -t < PHP_CodeSniffer_Report.txt
+          cat .php-codesniffer/phpcs-result.log >> email.txt
+
+          sendmail -S smtp.gmail.com:587 -f REPORT_MAIL_ADDRESS -t test+githubactions@e2info.com -u "PHP CodeSniffer Report" -smtp-auth-user REPORT_MAIL_ADDRESS -smtp-auth-password YOUR_PASSWORD -smtp-use-starttls -t < PHP_CodeSniffer_Report.txt
