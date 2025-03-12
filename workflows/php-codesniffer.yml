@@ -29,16 +29,35 @@ jobs:
           phpcs --standard=phpcs.xml src/ > .php-codesniffer/phpcs-result.log || true
         continue-on-error: true
 
+      - name: Install msmtp
+        run: |
+          sudo apt-get install msmtp
+
+      - name: Configure msmtp
+        run: |
+          echo "defaults" > ~/.msmtprc
+          echo "auth on" >> ~/.msmtprc
+          echo "tls on" >> ~/.msmtprc
+          echo "tls_trust_file /etc/ssl/certs/ca-certificates.crt" >> ~/.msmtprc
+          echo "account gmail" >> ~/.msmtprc
+          echo "host smtp.gmail.com" >> ~/.msmtprc
+          echo "port 587" >> ~/.msmtprc
+          echo "user ${{ secrets.SMTP_USERNAME }}" >> ~/.msmtprc
+          echo "password ${{ secrets.SMTP_PASSWORD }}" >> ~/.msmtprc
+          echo "from ${{ secrets.SMTP_USERNAME }}" >> ~/.msmtprc
+          echo "account default : gmail" >> ~/.msmtprc
+          chmod 600 ~/.msmtprc
+
       - name: Send Email Notification
         if: failure()  # エラーが発生した場合のみ通知を送信
         run: |
           echo "Subject: PHP CodeSniffer Report" > email.txt
-          echo "From: YOUR_EMAIL@gmail.com" >> email.txt
+          echo "From: ${{ secrets.SMTP_USERNAME }}" >> email.txt
           echo "To: RECIPIENT_EMAIL@example.com" >> email.txt
           echo "MIME-Version: 1.0" >> email.txt
-          echo "Content-Type: text/plain; charset=UTF-8" >> PHP_CodeSniffer_Report.txt
+          echo "Content-Type: text/plain; charset=UTF-8" >> email.txt
           echo "" >> email.txt
           echo "PHP CodeSniffer errors detected in the following files:" >> email.txt
           cat .php-codesniffer/phpcs-result.log >> email.txt
-
-          sendmail -S smtp.gmail.com:587 -f REPORT_MAIL_ADDRESS -t test+githubactions@e2info.com -u "PHP CodeSniffer Report" -smtp-auth-user REPORT_MAIL_ADDRESS -smtp-auth-password YOUR_PASSWORD -smtp-use-starttls -t < PHP_CodeSniffer_Report.txt
+          
+          msmtp RECIPIENT_EMAIL@example.com < email.txt
