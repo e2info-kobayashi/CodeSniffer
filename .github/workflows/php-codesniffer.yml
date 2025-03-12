@@ -13,15 +13,13 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'
+          php-version: 'latest'  # 最新のPHPバージョンを使用
 
       - name: Install dependencies
-        run: |
-          composer install
+        run: composer install
 
       - name: Install PHP CodeSniffer
-        run: |
-          composer global require "squizlabs/php_codesniffer=*"
+        run: composer global require "squizlabs/php_codesniffer=*"
 
       - name: Run PHP CodeSniffer
         id: phpcs
@@ -30,8 +28,7 @@ jobs:
         continue-on-error: true
 
       - name: Install msmtp
-        run: |
-          sudo apt-get install msmtp
+        run: sudo apt-get install msmtp
 
       - name: Configure msmtp
         run: |
@@ -59,5 +56,5 @@ jobs:
           echo "" >> email.txt
           echo "PHP CodeSniffer errors detected in the following files:" >> email.txt
           cat phpcs-result.log >> email.txt
-          
+
           msmtp ${{ secrets.SMTP_USERNAME }} < email.txt
