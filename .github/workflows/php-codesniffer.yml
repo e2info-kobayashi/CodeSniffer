@@ -26,7 +26,7 @@ jobs:
       - name: Run PHP CodeSniffer
         id: phpcs
         run: |
-          phpcs --standard=phpcs.xml src/ > .php-codesniffer/phpcs-result.log || true
+          phpcs --standard=.github/phpcs.xml src/ > phpcs-result.log || true
         continue-on-error: true
 
       - name: Install msmtp
@@ -58,6 +58,6 @@ jobs:
           echo "Content-Type: text/plain; charset=UTF-8" >> email.txt
           echo "" >> email.txt
           echo "PHP CodeSniffer errors detected in the following files:" >> email.txt
-          cat .php-codesniffer/phpcs-result.log >> email.txt
+          cat phpcs-result.log >> email.txt
           
-          msmtp ${{ secrets.SMTP_USERNAME }}@example.com < email.txt
+          msmtp ${{ secrets.SMTP_USERNAME }} < email.txt
