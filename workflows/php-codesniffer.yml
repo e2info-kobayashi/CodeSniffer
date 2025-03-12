@@ -1,0 +1,44 @@
+name: PHP CodeSniffer with Email Notification
+
+on: [push, pull_request]
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+
+      - name: Install dependencies
+        run: |
+          composer install
+
+      - name: Install PHP CodeSniffer
+        run: |
+          composer global require "squizlabs/php_codesniffer=*"
+
+      - name: Run PHP CodeSniffer
+        id: phpcs
+        run: |
+          phpcs --standard=PSR12 src/ > phpcs-result.log || true
+        continue-on-error: true
+
+      - name: Send Email Notification
+        if: failure()  # エラーが発生した場合のみ通知を送信
+        run: |
+          echo "Subject: PHP CodeSniffer Report" > email.txt
+          echo "From: YOUR_EMAIL@gmail.com" >> email.txt
+          echo "To: RECIPIENT_EMAIL@example.com" >> email.txt
+          echo "MIME-Version: 1.0" >> email.txt
+          echo "Content-Type: text/plain; charset=UTF-8" >> PHP_CodeSniffer_Report.txt
+          echo "" >> email.txt
+          echo "PHP CodeSniffer errors detected in the following files:" >> email.txt
+          cat phpcs-result.log >> email.txt
+          
+          sendmail -S smtp.gmail.com:587 -f YOUR_EMAIL@gmail.com -t test+githubactions@e2info.comexample.com -u "PHP CodeSniffer Report" -smtp-auth-user REPORT_MAILADDRESS -smtp-auth-password YOUR_PASSWORD -smtp-use-starttls -t < PHP_CodeSniffer_Report.txt
