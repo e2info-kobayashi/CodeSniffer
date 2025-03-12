@@ -1,5 +1,7 @@
 <?php
 
+ini_set('display_errors', 1);
+
 // [副作用] ini設定の変更
 ini_set('upload_max_filesize', '1M');
 
