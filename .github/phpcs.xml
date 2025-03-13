@@ -1,13 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="CustomRuleset">
-    <description>Custom ruleset for PHP CodeSniffer</description>
-    <rule ref="PSR12">
-        <!-- Add custom rules here -->
-    </rule>
-    <rule ref="Squiz.NamingConventions.ValidVariableName">
-        <properties>
-            <property name="validCamelCase" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+<ruleset name="Custom Standard">
+    <description>Custom coding standard based on PSR-2 and PSR-4</description>
+    <rule ref="PSR2"/>
+    <rule ref="PSR4"/>
 </ruleset>
